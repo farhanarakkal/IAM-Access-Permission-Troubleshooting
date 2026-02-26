@@ -1,208 +1,211 @@
-# IAM Access & Permission Troubleshooting
+# 🔐 IAM Access & Permission Troubleshooting Lab
 
-## 📌 Project Overview
+A hands-on AWS IAM project focused on diagnosing and resolving
+real-world permission errors at a Cloud / L1 Support Engineer level.
 
-This project demonstrates practical AWS IAM (Identity and Access
-Management) troubleshooting at an AWS Cloud L1 level.\
-It simulates a real-world scenario where a user is granted incorrect
-permissions and encounters an **Access Denied** error.\
-The issue is then diagnosed and resolved by attaching the correct
-policy.
-
-This project helps in understanding:
-
--   How IAM Users work
--   How IAM Policies control access
--   How to troubleshoot permission errors
--   The difference between IAM Users and IAM Roles
--   Why IAM is critical in AWS Cloud security
+This lab simulates a common enterprise scenario where a user is granted
+incorrect permissions, encounters an **Access Denied** error, and the
+issue is methodically investigated and resolved using proper IAM policy
+management.
 
 ------------------------------------------------------------------------
 
-# 🏗 Architecture Concept
+## 📦 Technologies
 
-Root User → Creates IAM User → Assigns Incorrect Policy → Access Denied\
-Root User → Fixes Policy → Access Restored
-
-------------------------------------------------------------------------
-
-# 🚀 Step-by-Step Implementation
-
-## ✅ STEP 1: Navigate to IAM
-
-AWS Console → Services → IAM
+-   AWS IAM (Identity and Access Management)
+-   AWS Management Console
+-   IAM Users
+-   IAM Roles
+-   IAM Policies (Managed Policies)
+-   AWS EC2
+-   AWS S3
 
 ------------------------------------------------------------------------
 
-## ✅ STEP 2: Create IAM User
+## 🦄 Features
 
-Path:\
-IAM → Users → Create User
+Here's what this lab demonstrates:
 
-Configuration:
-
--   Username: `cloud-user`
--   Access Type: ✔ AWS Management Console access
--   Set Custom Password
--   Uncheck: "User must reset password at next sign-in"
-
-Click **Create User**.
+-   **IAM User Creation** with console access
+-   **Policy-Based Access Control**
+-   **Intentional Permission Misconfiguration**
+-   **Access Denied Troubleshooting**
+-   **Policy Correction & Access Restoration**
+-   **IAM Role Creation for Secure Service Access**
+-   **Understanding Least Privilege Principle**
 
 ------------------------------------------------------------------------
 
-## ❌ STEP 3: Attach Incorrect Permissions (Intentional Error)
+## 🏗️ Architecture Concept
 
-Attach the following policy:
+Root User\
+↓\
+Creates IAM User\
+↓\
+Attaches Incorrect Policy\
+↓\
+Access Denied\
+↓\
+Diagnoses Issue\
+↓\
+Attaches Correct Policy\
+↓\
+Access Restored
+
+This project focuses on Identity & Access Management rather than
+infrastructure.
+
+------------------------------------------------------------------------
+
+## 🚀 What You Can Do
+
+After completing this lab, you can:
+
+-   Create and configure IAM users
+-   Attach and manage IAM policies
+-   Diagnose permission-based errors
+-   Understand managed vs role-based access
+-   Implement least-privilege security practices
+-   Differentiate IAM Users and IAM Roles clearly
+
+------------------------------------------------------------------------
+
+## 👩🏽‍🍳 The Process
+
+I started by creating a new IAM user named `cloud-user` with AWS
+Management Console access and a custom password.
+
+To simulate a real-world issue, I intentionally attached:
 
 -   `AmazonS3ReadOnlyAccess`
 
-This policy only allows viewing S3 buckets and objects.
+This policy allows viewing S3 resources but does not provide EC2
+permissions.
 
-Create the user.
+Next, I logged in as the IAM user and attempted to access EC2.
+
+Result: Access Denied.
+
+Instead of randomly modifying settings, I analyzed the attached policies
+and identified that no EC2 permissions were assigned.
+
+To fix the issue:
+
+-   Logged in as Root user
+-   Navigated to IAM → Users → cloud-user
+-   Attached `AmazonEC2ReadOnlyAccess`
+
+After re-login, the EC2 dashboard loaded successfully.
+
+This reinforced how permission boundaries directly impact service
+visibility.
 
 ------------------------------------------------------------------------
 
-## 🔐 STEP 4: Login as IAM User
+## 🛠️ Troubleshooting Faced
 
-1.  Open a new browser window
-2.  Use the IAM login URL generated during user creation
-3.  Login with:
-    -   Username: `cloud-user`
-    -   Password: (custom password set earlier)
+### ❌ EC2 Access Denied
 
-Now attempt:
+Cause: - User only had S3 Read-Only permissions - No EC2 policy attached
 
-Services → EC2
+Fix: - Attached AmazonEC2ReadOnlyAccess policy - Verified successful
+dashboard access
 
-### ❌ Expected Result:
+------------------------------------------------------------------------
 
-You will see **Access Denied** error.
+## 🎭 IAM Role Creation
+
+To understand service-level access, I created:
+
+Role Name: `EC2-S3-ReadOnly-Role`
+
+Configuration: - Trusted Entity: AWS Service - Use Case: EC2 - Policy
+Attached: AmazonS3ReadOnlyAccess
+
+This role can now be attached to EC2 instances to allow secure S3 access
+without hardcoding credentials.
+
+------------------------------------------------------------------------
+
+## 📚 What I Learned
+
+### 🔐 IAM Fundamentals
+
+-   How managed policies control service access
+-   Why least privilege is critical
+-   How Access Denied errors indicate policy gaps
+
+### 👤 IAM Users
+
+-   Long-term credentials
+-   Console and programmatic access
+-   Manual permission assignment
+
+### 🎭 IAM Roles
+
+-   Temporary credentials
+-   Assumed by AWS services
+-   More secure for service-to-service communication
+
+### 🧠 Support Mindset
+
+Instead of guessing, I learned to:
+
+-   Check attached policies first
+-   Validate service permissions logically
+-   Apply minimal required permissions
+-   Re-test systematically
+
+------------------------------------------------------------------------
+
+## 📊 IAM User vs IAM Role (Quick Comparison)
+
+  Feature          IAM User                IAM Role
+  ---------------- ----------------------- ------------------------
+  Used By          Humans / Applications   AWS Services
+  Credentials      Long-term               Temporary
+  Password         Yes                     No
+  Access Keys      Yes                     Temporary only
+  Best For         Console/CLI access      EC2/Lambda permissions
+  Security Level   Moderate                Higher
+
+------------------------------------------------------------------------
+
+## 🔥 Why IAM is Critical in AWS
+
+IAM is the foundation of AWS security because it:
+
+-   Enforces least privilege access
+-   Prevents unauthorized service usage
+-   Enables structured enterprise security
+-   Supports compliance and governance models
+
+Without IAM, all users would effectively operate as root --- creating
+major security risks.
+
+------------------------------------------------------------------------
+
+## 🎯 How It Can Be Improved
+
+-   Implement custom least-privilege policy instead of managed policies
+-   Test cross-account role assumption
+-   Add MFA enforcement
+-   Implement permission boundaries
+-   Explore IAM Access Analyzer
+
+------------------------------------------------------------------------
+
+## 🏁 Final Result
+
+A successfully simulated IAM permission failure scenario that
+demonstrates real-world troubleshooting skills required for Cloud / AWS
+L1 Support Engineer roles.
+
+This project strengthens cloud security fundamentals and prepares for
+more advanced IAM architecture and governance concepts.
+
+------------------------------------------------------------------------
+
+## 📸 Screenshots
 
 ![EC2 Instance Access Denied and many more](Screenshots/dash.png)
-
-
-### 🔍 Why This Happens:
-
-The user only has S3 permissions.\
-There are **no EC2 permissions attached**.
-
-This is a classic IAM troubleshooting scenario.
-
-------------------------------------------------------------------------
-
-## 🛠 STEP 5: Fix the Access Issue
-
-1.  Login back as Root User
-
-2.  Navigate to: IAM → Users → cloud-user → Permissions
-
-3.  Click **Add Permissions**
-
-4.  Attach:
-
-    -   `AmazonEC2ReadOnlyAccess`
-
-Save changes.
-
-------------------------------------------------------------------------
-
-## ✅ STEP 6: Verify the Fix
-
-Login again as `cloud-user`.
-
-Navigate to:
-
-Services → EC2
-
-Now EC2 dashboard loads successfully.
-
-🎉 Issue resolved.
-
-------------------------------------------------------------------------
-
-# 🎭 STEP 7: IAM Role Creation (Basic Understanding)
-
-Navigate to:
-
-IAM → Roles → Create Role
-
-Configuration:
-
--   Trusted entity type: AWS Service
--   Use Case: EC2
--   Attach Policy: `AmazonS3ReadOnlyAccess`
--   Role Name: `EC2-S3-ReadOnly-Role`
-
-Create role.
-
-This role can now be attached to an EC2 instance to allow it to access
-S3 securely.
-
-------------------------------------------------------------------------
-
-# 🔐 IAM User vs IAM Role (Detailed Explanation)
-
-## 👤 IAM User
-
-An IAM User represents a person or application that needs long-term
-access to AWS.
-
-### Characteristics:
-
--   Has username & password
--   Can have access keys
--   Long-term credentials
--   Used by developers or administrators
--   Requires manual permission management
-
-### Example:
-
-`cloud-user` created in this project.
-
-------------------------------------------------------------------------
-
-## 🎭 IAM Role
-
-An IAM Role is a temporary identity assumed by AWS services or users.
-
-### Characteristics:
-
--   No password
--   No long-term credentials
--   Provides temporary security credentials
--   Used by EC2, Lambda, ECS, etc.
--   More secure for service-to-service access
-
-### Example:
-
-`EC2-S3-ReadOnly-Role` created in this project.
-
-------------------------------------------------------------------------
-
-# 📊 Key Differences
-
-  Feature          IAM User             IAM Role
-  ---------------- -------------------- ------------------------
-  Used By          Humans / Apps        AWS Services
-  Credentials      Long-term            Temporary
-  Password         Yes                  No
-  Access Keys      Yes                  Temporary Only
-  Best For         Console/CLI access   EC2/Lambda permissions
-  Security Level   Moderate             High
-
-------------------------------------------------------------------------
-
-# 🔥 Why IAM is Necessary in AWS Cloud
-
-IAM is critical because:
-
--   It enforces **least privilege access**
--   Prevents unauthorized access
--   Controls who can access which AWS service
--   Enables secure architecture
--   Supports enterprise-grade security compliance
-
-Without IAM: - Every user would have full root access ❌ - High risk of
-security breaches - No access control
-
-IAM ensures structured and secure cloud operations.
